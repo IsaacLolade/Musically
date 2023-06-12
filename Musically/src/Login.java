@@ -1,34 +1,29 @@
+
 import javax.swing.BorderFactory;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
-import javax.swing.JOptionPane;
 import javax.swing.JPasswordField;
 import javax.swing.JTextField;
-import javax.swing.border.Border;
-import javax.swing.JButton;
 
 import java.awt.Color;
-import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.Image;
-import java.awt.TextField;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
-import java.awt.event.WindowEvent;
 
 public class Login extends JFrame implements ActionListener, MouseListener {
     private JLabel f_login;
-    private JButton b_login = new JButton();
     private JLabel palabra_login;// login palaabra
     private JButton button;
-    protected static JTextField username;
-    protected static JPasswordField password;
+    static JTextField username;
+    static JPasswordField password;
     private JLabel f_password;
     private JLabel f_username;
+    private JLabel registro;
 
     public Login() {
 
@@ -43,9 +38,10 @@ public class Login extends JFrame implements ActionListener, MouseListener {
         this.button.setFont(new Font("Montserrat", Font.BOLD, 20));
         this.button.setBorder(BorderFactory.createEtchedBorder());
         // Imagenes e Iconos
+    
         ImageIcon closeIcon = new ImageIcon(
-                new ImageIcon("src\\photos\\conlema.png").getImage().getScaledInstance(350, 103, Image.SCALE_DEFAULT));
-        ImageIcon icono = new ImageIcon("src\\photos\\icono.png");
+                new ImageIcon("Photos/conlema.png").getImage().getScaledInstance(350, 103, Image.SCALE_DEFAULT));
+        ImageIcon icono = new ImageIcon("Photos/icono.png");
         this.setIconImage(icono.getImage());// cambiar icono de ventana
 
         // Etiquetas utilizadas para añadir imagen y otras cosas
@@ -60,33 +56,40 @@ public class Login extends JFrame implements ActionListener, MouseListener {
 
         // Creación campo usuario
 
-        this.username = new JTextField();
-        this.username.setHorizontalAlignment(JTextField.CENTER);
-        this.username.setBorder(BorderFactory.createLineBorder(Color.decode("0xffffff")));
-        this.username.setBounds(100, 320, 399, 65);
+        Login.username = new JTextField();
+        Login.username.setHorizontalAlignment(JTextField.CENTER);
+        Login.username.setBorder(BorderFactory.createLineBorder(Color.decode("0xffffff")));
+        Login.username.setBounds(100, 320, 399, 65);
 
         this.f_username = new JLabel("Username");
         this.f_username.setFont(new Font("Montserrat", Font.BOLD, 23));
         this.f_username.setBounds(100, 280, 200, 36);
         this.f_username.setForeground(Color.WHITE);
-        this.username.addMouseListener(this);
+        Login.username.addMouseListener(this);
 
         // Creación campo contraseña
-        this.password = new JPasswordField();
-        this.password.setHorizontalAlignment(JPasswordField.CENTER);
-        this.password.setBounds(100, 450, 399, 65);
-        this.password.setBorder(BorderFactory.createLineBorder(Color.decode("0xffffff")));
+        Login.password = new JPasswordField();
+        Login.password.setHorizontalAlignment(JPasswordField.CENTER);
+        Login.password.setBounds(100, 450, 399, 65);
+        Login.password.setBorder(BorderFactory.createLineBorder(Color.decode("0xffffff")));
         this.f_password = new JLabel("Password");
         this.f_password.setFont(new Font("Montserrat", Font.BOLD, 23));
         this.f_password.setBounds(100, 410, 200, 36);
         this.f_password.setForeground(Color.white);
+
+        this.registro = new  JLabel("Haven't got an Account yet ?");
+        this.registro.setFont(new Font("Montserrat", Font.BOLD, 14));
+        this.registro.setBounds(100,430,200,200);
+        this.registro.setForeground(new Color(0X4F53FF));
+        this.registro.addMouseListener(this);
+
         // Creación ventana login
         this.setTitle("Musically"); // titiulo aplicación
         this.getContentPane().setBackground(new Color(0x0B0633)); // fondo aplicado
         this.setSize(600, 775); // dimensiones de la aplicación
         this.setLayout(null);
         this.setResizable(false); // para que no se pueda modificar las dimensiones
-        this.setDefaultCloseOperation(this.DISPOSE_ON_CLOSE);// Para que se cierre al dirigirse al programa principal
+        this.setDefaultCloseOperation(Login.EXIT_ON_CLOSE);// Para que se cierre al dirigirse al programa principal
 
         // this.add(image);
         this.add(f_username);
@@ -95,6 +98,7 @@ public class Login extends JFrame implements ActionListener, MouseListener {
         this.add(password);
         this.add(button);
         this.add(f_login);
+        this.add(registro);
         this.add(palabra_login);
         this.setVisible(true); // Para que se aquello de la ventana
 
@@ -104,32 +108,37 @@ public class Login extends JFrame implements ActionListener, MouseListener {
     @Override
     public void actionPerformed(ActionEvent e) {
         if (e.getSource() == this.button) {
+            this.setVisible(false);
             Querys.Login();
+            
 
         }
 
     }
 
-    private void close() {
-        WindowEvent closeWindow = new WindowEvent(this, WindowEvent.WINDOW_CLOSING);
-        getToolkit().getDefaultToolkit().getSystemEventQueue().postEvent(closeWindow);
 
-    }
+    
 
     @Override
     public void mouseClicked(MouseEvent e) {
 
-        if (e.getSource() == this.username) {
-            if (this.username.getText().equalsIgnoreCase("Username")) {
-                this.username.setText("");
+        if (e.getSource() == Login.username) {
+            if (Login.username.getText().equalsIgnoreCase("Username")) {
+                Login.username.setText("");
             }
 
         }
 
-        if (e.getSource() == this.password) {
-            if (String.valueOf(this.password.getPassword()).equalsIgnoreCase("Password")) {
+        if (e.getSource() == Login.password) {
+            if (String.valueOf(Login.password.getPassword()).equalsIgnoreCase("Password")) {
 
             }
+        }
+
+        if (e.getSource() == this.registro){
+            this.setVisible(false);
+            new Register();
+           
         }
 
     }
@@ -150,29 +159,6 @@ public class Login extends JFrame implements ActionListener, MouseListener {
     public void mousePressed(MouseEvent e) {
     }
 
-    public JLabel getF_login() {
-        return this.f_login;
-    }
-
-    public void setF_login(JLabel f_login) {
-        this.f_login = f_login;
-    }
-
-    public JButton getB_login() {
-        return this.b_login;
-    }
-
-    public void setB_login(JButton b_login) {
-        this.b_login = b_login;
-    }
-
-    public JLabel getPalabra_login() {
-        return this.palabra_login;
-    }
-
-    public void setPalabra_login(JLabel palabra_login) {
-        this.palabra_login = palabra_login;
-    }
 
     public JButton getButton() {
         return this.button;
@@ -183,19 +169,15 @@ public class Login extends JFrame implements ActionListener, MouseListener {
     }
 
     public JTextField getUsername() {
-        return this.username;
+        return Login.username;
     }
 
-    public void setUsername(JTextField username) {
-        this.username = username;
-    }
 
     public JPasswordField getPassword() {
-        return this.password;
+        return Login.password;
     }
 
-    public void setPassword(JPasswordField password) {
-        this.password = password;
-    }
+
+
 
 }

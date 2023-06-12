@@ -1,74 +1,132 @@
+
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 
-import com.mysql.cj.xdevapi.Statement;
-import java.util.Scanner;
+import java.util.ArrayList;
+
 
 import javax.swing.JOptionPane;
-import javax.swing.JPasswordField;
-import javax.swing.JTextField;
 
 public class Querys {
 
-    static Scanner s = new Scanner(System.in);
 
     public static void signIn() {
 
         /// A modo de preuba en caso de que realice el sign in
         try {
 
-            String Query = " INSERT INTO usuarios(id_usuario,nombre,apellidos,contrasenya) VALUES(?,?,?,?)";
-            System.out.println("Introduzca el id de usuario");
-            String username = s.nextLine();
-            System.out.println("Introduzca su nombre");
-            String name = s.nextLine();
-            System.out.println("Introduzca el apellido");
-            String lastname = s.nextLine();
-            System.out.println("Introduzca la contraseña");
-            String password = s.nextLine();
-
-            PreparedStatement st = Conexion.con.prepareStatement(Query);
+            String query = "INSERT INTO usuarios (id_usuario,nombre,apellidos,contrasenya) VALUES(?,?,?,?)";
+           
+            String username = Register.username.getText();
+            String lastname = Register.surname.getText();
+            String passwd = String.valueOf(Register.password.getPassword());
+            String name = Register.nombre.getText();
+            
+           PreparedStatement st = Conexion.con.prepareStatement(query);
             st.setString(1, username);
-            st.setString(2, name);
+            st.setString(2,name );
             st.setString(3, lastname);
-            st.setString(4, password);
+            st.setString(4, passwd);
+            System.out.println(query);
             st.executeUpdate();
+            Principal principal = new Principal();
+            principal.setVisible(true);
+            JOptionPane.showMessageDialog(null, "Bienvenido " + username, " Welcome musician ", JOptionPane.INFORMATION_MESSAGE); // En
+                                                                                                         // sesión
+
+           
         } catch (SQLException e) {
-            System.out.println("Error al insertar en la tabla usuarios" + e);
+            System.out.println("ERROR DE TIPO:" + e);
+            JOptionPane.showMessageDialog(null, "No se ha podido añadir el exámen satisfactoriamente " , "Insert error", JOptionPane.ERROR_MESSAGE); // En
+                                                                                                         // sesión
         }
-        Conexion.closeConn();
-    }
+        
+       
+
+    } 
 
     public static void Login() {
-        Conexion.conectar();
+
         try {
 
             String user = Login.username.getText();
             String pass = String.valueOf(Login.password.getPassword());
 
-            String Query = "SELECT contrasenya, id_usuario FROM usuarios WHERE id_usuario = ? and contrasenya=?";
-            PreparedStatement st = Conexion.con.prepareStatement(Query);
-            st.setString(1, user);
-            st.setString(2, pass);
+            String query = "SELECT contrasenya, id_usuario FROM usuarios WHERE id_usuario = ? and contrasenya=?";
+            PreparedStatement st = Conexion.con.prepareStatement(query);
+            st.setString(1, user);// Seleccionamos el usuario
+            st.setString(2, pass);// Seleccionamos la contraseña
             ResultSet rs = st.executeQuery();
             if (rs.next()) {
                 Principal principal = new Principal();
                 principal.setVisible(true);
-                JOptionPane.showMessageDialog(null, "Bienvenido " + user, " Welcome", JOptionPane.INFORMATION_MESSAGE);
+                JOptionPane.showMessageDialog(null, "Bienvenido " + user, " Welcome musician ", JOptionPane.INFORMATION_MESSAGE); // En
+                                                                                                             // sesión
 
             } else {
-                JOptionPane.showMessageDialog(null, "Usuario o contraseña incorrectos");
+                JOptionPane.showMessageDialog(null, "Los datos introducidos son incorrectos");
+                new Login();
             }
 
         } catch (SQLException e) {
-            System.out.println("No se encuentra ningún usuario con esas credenciales" + e);
+            System.out.println("ERROR DE TIPO:" + e);
         }
-        Conexion.closeConn();
-    }
-
-    public static void verCaratula() {
-        Conexion.conectar();
 
     }
+
+    public static ArrayList<Object> returnMusicInfoFromId(String id) {
+        ArrayList<Object> musicInfo = new ArrayList<Object>();
+
+        try {
+            String query = "SELECT * from canciones WHERE nombre_cancion = ?";
+
+            PreparedStatement st = Conexion.con.prepareStatement(query);
+            st.setString(1, id);
+            ResultSet rs = st.executeQuery();
+
+            while (rs.next()) {
+                musicInfo.add(rs.getString("artista"));
+                musicInfo.add(rs.getString("genero"));
+                musicInfo.add(rs.getString("descripcion"));
+                musicInfo.add(rs.getBlob("portada"));
+
+            }
+
+        } catch (SQLException e) {
+            System.out.println("ERROR DE TIPO:" + e);
+        }
+
+        return musicInfo;
+
+
+       
+    }
+    public static ArrayList<Object> returnAlbuminfoFromId(String id){
+        ArrayList<Object> albumInfo = new ArrayList<Object>();
+
+        try {
+            String query = "SELECT * from albumes WHERE id_album = ?";
+
+            PreparedStatement st = Conexion.con.prepareStatement(query);
+            st.setString(1, id);
+            ResultSet rs = st.executeQuery();
+
+            while (rs.next()) {
+                albumInfo.add(rs.getString("artista"));
+                albumInfo.add(rs.getString("genero"));
+                albumInfo.add(rs.getString("descripcion"));
+                albumInfo.add(rs.getBlob("portada"));
+
+            }
+
+        } catch (SQLException e) {
+            System.out.println("ERROR DE TIPO:" + e);
+        }
+
+        return albumInfo;
+
+    }
+
+   
 }
